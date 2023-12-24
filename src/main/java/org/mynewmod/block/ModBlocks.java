@@ -16,6 +16,8 @@ import org.mynewmod.item.ModItemsGroups;
 public class ModBlocks  {
     public static Block NEW_BLOCK = registerBlock("new_block", new Block(FabricBlockSettings.create().nonOpaque().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
+    public static Block COLORED_BLOCK = registerBlock("colored_block", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
+
     private static Block registerBlock(String id, Block block) {
         ModItems.registerItem(id, new BlockItem(block, new FabricItemSettings()));
 
