@@ -9,9 +9,9 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 
-public class ColoredBlock extends Block {
+public class FurnaceBlock extends Block {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public ColoredBlock(Settings settings) {
+    public FurnaceBlock(Settings settings) {
         super(settings);
     }
 

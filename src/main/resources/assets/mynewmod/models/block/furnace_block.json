@@ -1,0 +1,12 @@
+{
+  "parent":"minecraft:block/cube",
+  "textures": {
+    "up":"mynewmod:block/furnace3",
+    "down":"mynewmod:block/furnace3",
+    "north":"mynewmod:block/furnace1",
+    "south": "mynewmod:block/furnace2",
+    "east": "mynewmod:block/furnace2",
+    "west": "mynewmod:block/furnace2",
+    "particle": "mynewmod:block/furnace1"
+  }
+}

@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "mynewmod:block/colored_block" },
-    "facing=east": { "model": "mynewmod:block/colored_block", "y": 90 },
-    "facing=south": { "model": "mynewmod:block/colored_block", "y": 180 },
-    "facing=west": { "model": "mynewmod:block/colored_block", "y": 270 }
-  }
-}
