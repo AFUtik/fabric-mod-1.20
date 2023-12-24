@@ -10,13 +10,14 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.mynewmod.MyNewMod;
+import org.mynewmod.block.custom.ColoredBlock;
 import org.mynewmod.item.ModItems;
 import org.mynewmod.item.ModItemsGroups;
 
 public class ModBlocks  {
     public static Block NEW_BLOCK = registerBlock("new_block", new Block(FabricBlockSettings.create().nonOpaque().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
-    public static Block COLORED_BLOCK = registerBlock("colored_block", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
+    public static Block COLORED_BLOCK = registerBlock("colored_block", new ColoredBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
     private static Block registerBlock(String id, Block block) {
         ModItems.registerItem(id, new BlockItem(block, new FabricItemSettings()));
