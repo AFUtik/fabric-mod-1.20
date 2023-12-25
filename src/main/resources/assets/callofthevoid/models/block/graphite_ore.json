@@ -1,6 +1,6 @@
 {
   "parent":"minecraft:block/cube_all",
   "textures": {
-    "all": "callofthevoid:block/grafite_ore_block"
+    "all": "callofthevoid:block/graphite_ore"
   }
 }

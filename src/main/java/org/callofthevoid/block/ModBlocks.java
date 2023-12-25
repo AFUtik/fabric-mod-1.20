@@ -13,7 +13,7 @@ import org.callofthevoid.item.ModItems;
 import org.callofthevoid.item.ModItemsGroups;
 
 public class ModBlocks {
-    public static Block GRAFITE_ORE_BLOCK = registerBlock("grafite_ore_block", new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f)), ModItemsGroups.NEW_GROUP);
+    public static Block GRAPHITE_ORE_BLOCK = registerBlock("graphite_ore", new Block(FabricBlockSettings.of(Material.METAL).strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
     private static Block registerBlock(String id, Block block) {
         ModItems.registerItem(id, new BlockItem(block, new FabricItemSettings()));

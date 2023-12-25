@@ -1,5 +1,5 @@
 {
-  "item.callofthevoid.crude_ore_item": "Crude Grafite Ore",
-  "block.callofthevoid.grafite_ore_block": "Grafite Ore",
+  "item.callofthevoid.crude_graphite": "Crude Graphite",
+  "block.callofthevoid.graphite_ore": "Graphite Ore",
   "itemGroup.callofthevoid.new_group": "Call of The Void"
 }
