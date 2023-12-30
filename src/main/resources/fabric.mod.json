@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "mynewmod",
+	"id": "callofthevoid",
 	"version": "${version}",
-	"name": "Template Mod",
+	"name": "Call of The void",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -12,18 +12,21 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/mynewmod/icon.png",
+	"icon": "assets/callofthevoid/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"org.mynewmod.MyNewMod"
+			"org.callofthevoid.CallOfTheVoid"
 		],
 		"client": [
-			"org.mynewmod.MyNewModClient"
+			"org.callofthevoid.CallOfTheVoidClient"
+		],
+		"fabric-datagen": [
+			"org.callofthevoid.CallOfTheVoidDataGenerator"
 		]
 	},
 	"mixins": [
-		"mynewmod.mixins.json"
+		"callofthevoid.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.15.3",
