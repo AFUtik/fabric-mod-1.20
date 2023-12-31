@@ -38,7 +38,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
     private void renderProgressArrow(DrawContext context, int x, int y) {
         if(handler.isCrafting()) {
-            context.drawTexture(TEXTURE, x + 85, y + 32, 176, 0, handler.getScaledProgress(), 17);
+            context.drawTexture(TEXTURE, x + 87, y + 33, 176, 0, handler.getScaledProgress(), 15);
         }
     }
 

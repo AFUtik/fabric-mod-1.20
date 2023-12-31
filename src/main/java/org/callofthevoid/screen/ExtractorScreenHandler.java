@@ -11,6 +11,7 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import org.callofthevoid.block.entity.ExtractorBlockEntity;
+import org.callofthevoid.screen.slot.OutputSlot;
 
 public class ExtractorScreenHandler extends ScreenHandler {
     private final Inventory inventory;
@@ -33,7 +34,7 @@ public class ExtractorScreenHandler extends ScreenHandler {
 
         this.addSlot(new Slot(inventory, 0, 66, 16));
         this.addSlot(new Slot(inventory, 1, 66, 50));
-        this.addSlot(new Slot(inventory, 2, 114, 33));
+        this.addSlot(new OutputSlot(inventory, 2, 115, 33));
 
 
         addPlayerInventory(playerInventory);
@@ -49,7 +50,7 @@ public class ExtractorScreenHandler extends ScreenHandler {
     public int getScaledProgress() {
         int progress = this.propertyDelegate.get(0);
         int maxProgress = this.propertyDelegate.get(1);  // Max Progress
-        int progressArrowSize = 26; // This is the width in pixels of your arrow
+        int progressArrowSize = 22; // This is the width in pixels of your arrow
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
