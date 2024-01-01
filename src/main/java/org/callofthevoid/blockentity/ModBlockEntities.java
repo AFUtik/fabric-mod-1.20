@@ -1,4 +1,4 @@
-package org.callofthevoid.block.entity;
+package org.callofthevoid.blockentity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
@@ -7,6 +7,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.block.ModBlocks;
+import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 
 public class ModBlockEntities {
     public static BlockEntityType<ExtractorBlockEntity> EXTRACTOR_BLOCK_ENTITY;

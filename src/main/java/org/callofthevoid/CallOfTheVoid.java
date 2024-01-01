@@ -2,7 +2,7 @@ package org.callofthevoid;
 
 import net.fabricmc.api.ModInitializer;
 import org.callofthevoid.block.ModBlocks;
-import org.callofthevoid.block.entity.ModBlockEntities;
+import org.callofthevoid.blockentity.ModBlockEntities;
 import org.callofthevoid.item.ModItems;
 import org.callofthevoid.item.ModItemsGroups;
 import org.callofthevoid.screen.ModScreenHandlers;

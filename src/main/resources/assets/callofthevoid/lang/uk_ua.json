@@ -1,6 +1,10 @@
 {
   "item.callofthevoid.crude_graphite": "Сирий графен",
+  "item.callofthevoid.pocket_workbench": "Кишеньковий верстак",
   "block.callofthevoid.graphite_ore": "Графітова руда",
+
   "block.callofthevoid.extractor": "Екстрактор",
+  "block.callofthevoid.accumulator": "Накопичувач енергії",
+
   "itemGroup.callofthevoid.new_group": "Call of The void"
 }

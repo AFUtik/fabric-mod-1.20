@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "callofthevoid:block/accumulator" },
+    "facing=east": { "model": "callofthevoid:block/accumulator", "y": 90 },
+    "facing=south": { "model": "callofthevoid:block/accumulator", "y": 180 },
+    "facing=west": { "model": "callofthevoid:block/accumulator", "y": 270 }
+  }
+}

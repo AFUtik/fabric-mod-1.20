@@ -1,4 +1,4 @@
-package org.callofthevoid.block.custom;
+package org.callofthevoid.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -15,19 +15,14 @@ import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.jetbrains.annotations.Nullable;
-import org.callofthevoid.block.entity.ExtractorBlockEntity;
-import org.callofthevoid.block.entity.ModBlockEntities;
 
-public class ExtractorBlock extends BlockWithEntity implements BlockEntityProvider {
+public class BaseCustomBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public ExtractorBlock(Settings settings) {
-        super(settings);
-    }
 
-    @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+    protected BaseCustomBlock(Settings settings) {
+        super(settings);
     }
 
     @Override
@@ -53,6 +48,11 @@ public class ExtractorBlock extends BlockWithEntity implements BlockEntityProvid
     /* BLOCK ENTITY */
 
     @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
+    }
+
+    @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }
@@ -60,15 +60,15 @@ public class ExtractorBlock extends BlockWithEntity implements BlockEntityProvid
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ExtractorBlockEntity(pos, state);
+        return null;
     }
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof ExtractorBlockEntity) {
-                ItemScatterer.spawn(world, pos, (ExtractorBlockEntity)blockEntity);
+            if (blockEntity instanceof BaseBlockEntity) {
+                ItemScatterer.spawn(world, pos, (BaseBlockEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -78,7 +78,7 @@ public class ExtractorBlock extends BlockWithEntity implements BlockEntityProvid
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            NamedScreenHandlerFactory screenHandlerFactory = ((ExtractorBlockEntity) world.getBlockEntity(pos));
+            NamedScreenHandlerFactory screenHandlerFactory = ((BaseBlockEntity) world.getBlockEntity(pos));
 
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
@@ -88,11 +88,12 @@ public class ExtractorBlock extends BlockWithEntity implements BlockEntityProvid
         return ActionResult.SUCCESS;
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, ModBlockEntities.EXTRACTOR_BLOCK_ENTITY,
-                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
-    }
 
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return (world1, pos, state1, blockEntity) -> {
+            if (blockEntity instanceof BlockEntityTicker) {
+                ((BlockEntityTicker) blockEntity).tick(world1, pos, state1, blockEntity);
+            }
+        };
+    }
 }

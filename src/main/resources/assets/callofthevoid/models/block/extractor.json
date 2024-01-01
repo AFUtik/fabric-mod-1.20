@@ -1,12 +1,12 @@
 {
   "parent":"minecraft:block/cube",
   "textures": {
-    "up":"callofthevoid:block/furnace3",
-    "down":"callofthevoid:block/furnace3",
-    "north":"callofthevoid:block/furnace1",
-    "south": "callofthevoid:block/furnace2",
-    "east": "callofthevoid:block/furnace2",
-    "west": "callofthevoid:block/furnace2",
-    "particle": "callofthevoid:block/furnace1"
+    "up":"callofthevoid:block/new-extractor-top",
+    "down":"callofthevoid:block/new-extractor-down",
+    "north":"callofthevoid:block/new-extractor-north",
+    "south": "callofthevoid:block/new-extractor-behind",
+    "east": "callofthevoid:block/new-extractor-side",
+    "west": "callofthevoid:block/new-extractor-side",
+    "particle": "callofthevoid:block/new-extractor-north"
   }
 }

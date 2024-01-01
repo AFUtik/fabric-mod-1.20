@@ -1,0 +1,12 @@
+{
+  "parent":"minecraft:block/cube",
+  "textures": {
+    "up":"callofthevoid:block/accumulator_top",
+    "down":"callofthevoid:block/accumulator_down",
+    "north":"callofthevoid:block/accumulator_north",
+    "south": "callofthevoid:block/accumulator_behind",
+    "east": "callofthevoid:block/accumulator_side",
+    "west": "callofthevoid:block/accumulator_side",
+    "particle": "callofthevoid:block/accumulator_north"
+  }
+}

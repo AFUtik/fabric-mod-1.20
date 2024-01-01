@@ -13,6 +13,10 @@ import org.callofthevoid.CallOfTheVoid;
 public class ModItems {
     public static final Item CRUDE_GRAPHITE = registerItem("crude_graphite", new Item(new FabricItemSettings()), ModItemsGroups.NEW_GROUP);
 
+
+
+    public static final Item POCKET_WORKBENCH = registerItem("pocket_workbench", new Item(new FabricItemSettings()), ModItemsGroups.NEW_GROUP);
+
     public static Item registerItem(String id, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(CallOfTheVoid.MOD_ID, id), item);
     }

@@ -10,14 +10,16 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
-import org.callofthevoid.block.custom.ExtractorBlock;
+import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.item.ModItems;
 import org.callofthevoid.item.ModItemsGroups;
 
 public class ModBlocks  {
     public static Block GRAPHITE_ORE_BLOCK = registerBlock("graphite_ore", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
-    public static Block EXTRACTOR_BLOCK = registerBlock("extractor", new ExtractorBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
+    public static Block EXTRACTOR_BLOCK = registerBlock("extractor", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), ExtractorBlockEntity::new), ModItemsGroups.NEW_GROUP);
+
+    public static Block ACCUMULATOR_BLOCK = registerBlock("accumulator", new BaseCustomBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
     private static Block registerBlock(String id, Block block) {
         ModItems.registerItem(id, new BlockItem(block, new FabricItemSettings()));

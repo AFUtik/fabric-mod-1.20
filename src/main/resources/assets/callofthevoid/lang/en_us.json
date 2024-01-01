@@ -1,6 +1,10 @@
 {
   "item.callofthevoid.crude_graphite": "Crude Graphite",
+  "item.callofthevoid.pocket_workbench": "Pocket Crafter",
   "block.callofthevoid.graphite_ore": "Graphite Ore",
+
   "block.callofthevoid.extractor": "Extractor",
+  "block.callofthevoid.accumulator": "Accumulator",
+
   "itemGroup.callofthevoid.new_group": "Call of The void"
 }

@@ -1,6 +1,10 @@
 {
   "item.callofthevoid.crude_graphite": "Сырой графен",
+  "item.callofthevoid.pocket_workbench": "Карманный верстак",
   "block.callofthevoid.graphite_ore": "Графитовая руда",
+
   "block.callofthevoid.extractor": "Экстрактор",
+  "block.callofthevoid.accumulator": "Накопитель энергии",
+
   "itemGroup.callofthevoid.new_group": "Зов Пустоты"
 }

@@ -1,8 +1,7 @@
-package org.callofthevoid.block.entity;
+package org.callofthevoid.blockentity.machines;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -10,20 +9,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.callofthevoid.blockentity.BaseBlockEntity;
+import org.callofthevoid.blockentity.ModBlockEntities;
 import org.jetbrains.annotations.Nullable;
 import org.callofthevoid.item.ModItems;
-import org.callofthevoid.item.inventory.ImplementedInventory;
 import org.callofthevoid.screen.ExtractorScreenHandler;
 
-public class ExtractorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntityTicker<ExtractorBlockEntity> {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
 
     private static final int[] INPUT_SLOT = {0, 1};
@@ -60,12 +58,6 @@ public class ExtractorBlockEntity extends BlockEntity implements ExtendedScreenH
         };
     }
 
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(this.pos);
-    }
-
     @Override
     public Text getDisplayName() {
         return Text.literal("Extractor");
@@ -96,28 +88,6 @@ public class ExtractorBlockEntity extends BlockEntity implements ExtendedScreenH
         return new ExtractorScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
 
-    public void tick(World world, BlockPos pos, BlockState state) {
-        if(world.isClient()) {
-            return;
-        }
-
-        if(isOutputSlotEmptyOrReceivable()) {
-            if(this.hasRecipe()) {
-                this.increaseCraftProgress();
-                markDirty(world, pos, state);
-
-                if(hasCraftingFinished()) {
-                    this.craftItem();
-                    this.resetProgress();
-                }
-            } else {
-                this.resetProgress();
-            }
-        } else {
-            this.resetProgress();
-            markDirty(world, pos, state);
-        }
-    }
 
     private void resetProgress() {
         this.progress = 0;
@@ -156,5 +126,29 @@ public class ExtractorBlockEntity extends BlockEntity implements ExtendedScreenH
 
     private boolean isOutputSlotEmptyOrReceivable() {
         return this.getStack(OUTPUT_SLOT).isEmpty() || this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount();
+    }
+
+    @Override
+    public void tick(World world, BlockPos pos, BlockState state, ExtractorBlockEntity blockEntity) {
+        if(world.isClient()) {
+            return;
+        }
+
+        if(isOutputSlotEmptyOrReceivable()) {
+            if(this.hasRecipe()) {
+                this.increaseCraftProgress();
+                markDirty(world, pos, state);
+
+                if(hasCraftingFinished()) {
+                    this.craftItem();
+                    this.resetProgress();
+                }
+            } else {
+                this.resetProgress();
+            }
+        } else {
+            this.resetProgress();
+            markDirty(world, pos, state);
+        }
     }
 }
