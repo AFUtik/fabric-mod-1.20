@@ -1,5 +1,6 @@
 package org.callofthevoid;
 
+import org.callofthevoid.fluid.ModFluids;
 import net.fabricmc.api.ModInitializer;
 import org.callofthevoid.block.ModBlocks;
 import org.callofthevoid.blockentity.ModBlockEntities;
@@ -19,6 +20,7 @@ public class CallOfTheVoid implements ModInitializer {
 	public void onInitialize() {
 		ModItems.register();
 		ModBlocks.register();
+		ModFluids.register();
 		ModItemsGroups.registerItemGroups();
 
 		ModScreenHandlers.registerScreenHandlers();

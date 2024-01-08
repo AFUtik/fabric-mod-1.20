@@ -1,0 +1,12 @@
+{
+  "parent":"minecraft:block/cube",
+  "textures": {
+    "up":"callofthevoid:block/boiler-top",
+    "down":"callofthevoid:block/boiler-down",
+    "north":"callofthevoid:block/boiler-north",
+    "south": "callofthevoid:block/boiler-south",
+    "east": "callofthevoid:block/boiler-left-side",
+    "west": "callofthevoid:block/boiler-right-side",
+    "particle": "callofthevoid:block/boiler-north"
+  }
+}

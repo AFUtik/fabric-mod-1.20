@@ -12,11 +12,13 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.screen.slot.OutputSlot;
+import org.callofthevoid.util.FluidStack;
 
 public class ExtractorScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final ExtractorBlockEntity blockEntity;
+    public FluidStack fluidStack;
 
     public ExtractorScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
@@ -31,6 +33,7 @@ public class ExtractorScreenHandler extends ScreenHandler {
         inventory.onOpen(playerInventory.player);
         this.propertyDelegate = arrayPropertyDelegate;
         this.blockEntity = ((ExtractorBlockEntity) blockEntity);
+        this.fluidStack = new FluidStack(((ExtractorBlockEntity) blockEntity).fluidStorage.variant, ((ExtractorBlockEntity) blockEntity).fluidStorage.amount);
 
         this.addSlot(new Slot(inventory, 0, 66, 16));
         this.addSlot(new Slot(inventory, 1, 66, 50));
@@ -41,6 +44,10 @@ public class ExtractorScreenHandler extends ScreenHandler {
         addPlayerHotbar(playerInventory);
 
         addProperties(arrayPropertyDelegate);
+    }
+
+    public void setFluid(FluidStack stack) {
+        fluidStack = stack;
     }
 
     public boolean isCrafting() {

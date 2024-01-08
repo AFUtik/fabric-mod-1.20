@@ -1,6 +1,7 @@
 package org.callofthevoid.blockentity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -17,5 +18,9 @@ public class ModBlockEntities {
                 new Identifier(CallOfTheVoid.MOD_ID, "extractor"),
                 FabricBlockEntityTypeBuilder.create(ExtractorBlockEntity::new,
                         ModBlocks.EXTRACTOR_BLOCK).build(null));
+
+        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, EXTRACTOR_BLOCK_ENTITY);
     }
+
+
 }

@@ -4,18 +4,18 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
+import org.callofthevoid.item.custom.CustomPocketWorkbench;
 
 public class ModItems {
     public static final Item CRUDE_GRAPHITE = registerItem("crude_graphite", new Item(new FabricItemSettings()), ModItemsGroups.NEW_GROUP);
 
-
-
-    public static final Item POCKET_WORKBENCH = registerItem("pocket_workbench", new Item(new FabricItemSettings()), ModItemsGroups.NEW_GROUP);
+    public static final Item POCKET_WORKBENCH = registerItem("pocket_workbench", new CustomPocketWorkbench(new FabricItemSettings()), ModItemsGroups.NEW_GROUP);
 
     public static Item registerItem(String id, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(CallOfTheVoid.MOD_ID, id), item);

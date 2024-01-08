@@ -5,6 +5,7 @@
 
   "block.callofthevoid.extractor": "Екстрактор",
   "block.callofthevoid.accumulator": "Накопичувач енергії",
+  "block.callofthevoid.boiler": "Паровий котел",
 
   "itemGroup.callofthevoid.new_group": "Call of The void"
 }

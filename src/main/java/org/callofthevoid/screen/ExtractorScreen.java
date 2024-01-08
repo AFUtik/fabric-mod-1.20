@@ -1,16 +1,25 @@
 package org.callofthevoid.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
+import org.callofthevoid.screen.renderer.FluidStackRenderer;
+import org.callofthevoid.util.FluidStack;
+import org.callofthevoid.util.MouseUtil;
+
+import java.util.Optional;
 
 public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(CallOfTheVoid.MOD_ID, "textures/gui/gui-extractor.png");
+    private static final Identifier fluidTex = new Identifier(CallOfTheVoid.MOD_ID, "textures/fluids/fluids.png");
+    FluidStackRenderer fluidStackRenderer;
 
     public ExtractorScreen(ExtractorScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -21,6 +30,13 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         super.init();
         titleY = 1000;
         playerInventoryTitleY = 1000;
+
+        assignFluidStackRenderer();
+    }
+
+    private void assignFluidStackRenderer() {
+        fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 20,
+                true, 12, 48);
     }
 
     @Override
@@ -34,6 +50,25 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
         renderProgressArrow(context, x, y);
+
+        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack, x + 20, y + 17, 12, 48,
+                FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 20);
+    }
+
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+
+        renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
+    }
+
+    private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
+                                    FluidStack fluidStack, int offsetX, int offsetY, FluidStackRenderer renderer) {
+        if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
+            context.drawTooltip(renderer.getFontRenderer(client, fluidStack), renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
+                    Optional.empty(), mouseX - x, mouseY - y);
+        }
     }
 
     private void renderProgressArrow(DrawContext context, int x, int y) {
@@ -47,5 +82,13 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, FluidStackRenderer renderer) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }
 }

@@ -5,6 +5,14 @@
 
   "block.callofthevoid.extractor": "Extractor",
   "block.callofthevoid.accumulator": "Accumulator",
+  "block.callofthevoid.boiler": "Boiler",
+  "block.callofthevoid.temperature_regulator": "Temperature regulator",
+  "block.callofthevoid.body": "Body",
 
-  "itemGroup.callofthevoid.new_group": "Call of The void"
+  "block.callofthevoid.graphite_oil": "Graphite Oil",
+
+  "itemGroup.callofthevoid.new_group": "Call of The void",
+
+  "callofthevoid.tooltip.liquid.amount.with.capacity": "%s / %s mB",
+  "callofthevoid.tooltip.liquid.amount": "%s mB"
 }

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "callofthevoid:block/temperature_regulator" },
+    "facing=east": { "model": "callofthevoid:block/temperature_regulator", "y": 90 },
+    "facing=south": { "model": "callofthevoid:block/temperature_regulator", "y": 180 },
+    "facing=west": { "model": "callofthevoid:block/temperature_regulator", "y": 270 }
+  }
+}

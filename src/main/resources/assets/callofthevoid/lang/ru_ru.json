@@ -5,6 +5,11 @@
 
   "block.callofthevoid.extractor": "Экстрактор",
   "block.callofthevoid.accumulator": "Накопитель энергии",
+  "block.callofthevoid.boiler": "Паровой котёл",
+  "block.callofthevoid.temperature_regulator": "Регулятор температуры",
+  "block.callofthevoid.body": "Корпус",
+
+  "block.callofthevoid.graphite_oil": "Графелин",
 
   "itemGroup.callofthevoid.new_group": "Зов Пустоты"
 }
