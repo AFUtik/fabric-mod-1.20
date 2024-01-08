@@ -26,7 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.callofthevoid.networking.ModMessages;
+import org.callofthevoid.network.ModMessages;
 import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.callofthevoid.blockentity.ModBlockEntities;
 import org.callofthevoid.util.FluidStack;
@@ -44,39 +44,8 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     private int progress = 0;
     private int maxProgress = 72;
 
-    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<FluidVariant>() {
-        @Override
-        protected FluidVariant getBlankVariant() {
-            return FluidVariant.blank();
-        }
-
-        @Override
-        protected long getCapacity(FluidVariant variant) {
-            return FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 20;
-        }
-
-        @Override
-        protected void onFinalCommit() {
-            markDirty();
-            if(!world.isClient()) {
-                sendFluidPacket();
-            }
-        }
-    };
-
-    private void sendFluidPacket() {
-        PacketByteBuf data = PacketByteBufs.create();
-        fluidStorage.variant.toPacket(data);
-        data.writeLong(fluidStorage.amount);
-        data.writeBlockPos(getPos());
-
-        for (ServerPlayerEntity player : PlayerLookup.tracking((ServerWorld) world, getPos())) {
-            ServerPlayNetworking.send(player, ModMessages.FLUID_SYNC, data);
-        }
-    }
-
     public ExtractorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state);
+        super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state, FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -102,9 +71,8 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         };
     }
 
-    public void setFluidLevel(FluidVariant fluidVariant, long fluidLevel) {
-        this.fluidStorage.variant = fluidVariant;
-        this.fluidStorage.amount = fluidLevel;
+    private static boolean hasFluidSourceInSlot(ExtractorBlockEntity entity) {
+        return entity.getStack(0).getItem() == ModFluids.SOAP_WATER_BUCKET;
     }
 
     @Override
@@ -121,37 +89,28 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("custom.extractor.progress", progress);
+        nbt.putInt("extractor.progress", progress);
         nbt.put("extractor.variant", fluidStorage.variant.toNbt());
-        nbt.putLong("extractor.org.callofthevoid.fluid", fluidStorage.amount);
+        nbt.putLong("extractor.fluid", fluidStorage.amount);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("custom.extractor.progress");
+        progress = nbt.getInt("extractor.progress");
         fluidStorage.variant = FluidVariant.fromNbt((NbtCompound) nbt.get("extractor.variant"));
-        fluidStorage.amount = nbt.getLong("extractor.org.callofthevoid.fluid");
+        fluidStorage.amount = nbt.getLong("extractor.fluid");
     }
 
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        sendFluidPacket();
+        super.createMenu(syncId, playerInventory, player);
+
         return new ExtractorScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
-    private static void transferFluidToFluidStorage(ExtractorBlockEntity entity) {
-        try(Transaction transaction = Transaction.openOuter()) {
-            entity.fluidStorage.insert(FluidVariant.of(ModFluids.STILL_GRAPHITE_OIL),
-                    FluidStack.convertDropletsToMb(FluidConstants.BUCKET), transaction);
-            transaction.commit();
-        }
-    }
 
-    private static boolean hasFluidSourceInSlot(ExtractorBlockEntity entity) {
-        return entity.getStack(0).getItem() == ModFluids.SOAP_WATER_BUCKET;
-    }
 
     private void resetProgress() {
         this.progress = 0;
@@ -206,7 +165,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
                 if(hasCraftingFinished()) {
                     this.craftItem();
                     this.resetProgress();
-                    transferFluidToFluidStorage(blockEntity);
+                    transferFluidToFluidStorage(blockEntity, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
                 }
             } else {
                 this.resetProgress();

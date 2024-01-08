@@ -35,8 +35,8 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     }
 
     private void assignFluidStackRenderer() {
-        fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 20,
-                true, 12, 48);
+        fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5,
+                true, 12, 50);
     }
 
     @Override
@@ -51,8 +51,9 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         renderProgressArrow(context, x, y);
 
-        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack, x + 20, y + 17, 12, 48,
-                FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 20);
+        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(),
+                fluidStackRenderer.capacityMb);
+        context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
     }
 
     @Override

@@ -1,8 +1,8 @@
-package org.callofthevoid.networking;
+package org.callofthevoid.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.util.Identifier;
-import org.callofthevoid.networking.packet.FluidSyncS2CPacket;
+import org.callofthevoid.network.packet.FluidSyncS2CPacket;
 import org.callofthevoid.CallOfTheVoid;
 
 public class ModMessages {

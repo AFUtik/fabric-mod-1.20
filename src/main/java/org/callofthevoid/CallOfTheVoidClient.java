@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
-import org.callofthevoid.networking.ModMessages;
+import org.callofthevoid.network.ModMessages;
 import org.callofthevoid.screen.ExtractorScreen;
 import org.callofthevoid.screen.ModScreenHandlers;
 
