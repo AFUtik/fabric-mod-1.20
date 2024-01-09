@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
+import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.screen.slot.OutputSlot;
 import org.callofthevoid.util.FluidStack;
@@ -15,12 +16,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    public final ExtractorBlockEntity blockEntity;
+    public final BaseBlockEntity blockEntity;
 
     protected BaseScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId,PlayerInventory playerInventory, BlockEntity blockEntity) {
         super(type, syncId);
         this.inventory = ((Inventory) blockEntity);
-        this.blockEntity = ((ExtractorBlockEntity) blockEntity);
+        this.blockEntity = ((BaseBlockEntity) blockEntity);
         inventory.onOpen(playerInventory.player);
 
         addPlayerInventory(playerInventory);

@@ -2,6 +2,7 @@ package org.callofthevoid.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.item.TooltipContext;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
+import org.callofthevoid.screen.renderer.EnergyInfoArea;
 import org.callofthevoid.screen.renderer.FluidStackRenderer;
 import org.callofthevoid.util.FluidStack;
 import org.callofthevoid.util.MouseUtil;
@@ -19,6 +21,8 @@ import java.util.Optional;
 public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(CallOfTheVoid.MOD_ID, "textures/gui/gui-extractor.png");
     private static final Identifier fluidTex = new Identifier(CallOfTheVoid.MOD_ID, "textures/fluids/fluids.png");
+
+    EnergyInfoArea energyInfoArea;
     FluidStackRenderer fluidStackRenderer;
 
     public ExtractorScreen(ExtractorScreenHandler handler, PlayerInventory inventory, Text title) {
@@ -31,12 +35,18 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         titleY = 1000;
         playerInventoryTitleY = 1000;
 
+        assignEnergyInfoArea();
         assignFluidStackRenderer();
     }
 
     private void assignFluidStackRenderer() {
         fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5,
                 true, 12, 50);
+    }
+
+    private void assignEnergyInfoArea() {
+        energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2) + 161,
+                ((height - backgroundHeight) / 2 ) + 8, handler.blockEntity.energyStorage, 8, 69);
     }
 
     @Override
@@ -51,8 +61,10 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         renderProgressArrow(context, x, y);
 
+        energyInfoArea.draw(context);
         fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(),
                 fluidStackRenderer.capacityMb);
+
         context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
     }
 
@@ -62,13 +74,21 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         int y = (height - backgroundHeight) / 2;
 
         renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
+        renderEnergyAreaTooltips(context, mouseX, mouseY, x, y);
     }
 
     private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
                                     FluidStack fluidStack, int offsetX, int offsetY, FluidStackRenderer renderer) {
         if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
-            context.drawTooltip(renderer.getFontRenderer(client, fluidStack), renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
+            context.drawTooltip(MinecraftClient.getInstance().textRenderer, renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
                     Optional.empty(), mouseX - x, mouseY - y);
+        }
+    }
+
+    private void renderEnergyAreaTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 161, 8, 8, 69)) {
+            context.drawTooltip(MinecraftClient.getInstance().textRenderer, energyInfoArea.getTooltips(),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
         }
     }
 

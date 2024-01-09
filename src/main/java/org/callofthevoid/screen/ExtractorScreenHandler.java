@@ -12,6 +12,7 @@ import org.callofthevoid.util.FluidStack;
 public class ExtractorScreenHandler extends BaseScreenHandler {
     private final PropertyDelegate propertyDelegate;
     public FluidStack fluidStack;
+    public final ExtractorBlockEntity blockEntity;
 
     public ExtractorScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
@@ -24,6 +25,7 @@ public class ExtractorScreenHandler extends BaseScreenHandler {
         checkSize(((Inventory) blockEntity), 2);
         this.propertyDelegate = arrayPropertyDelegate;
         this.fluidStack = new FluidStack(((ExtractorBlockEntity) blockEntity).fluidStorage.variant, ((ExtractorBlockEntity) blockEntity).fluidStorage.amount);
+        this.blockEntity = (ExtractorBlockEntity) blockEntity;
 
         addSlot(0, 66, 16);
         addSlot(1, 66, 50);

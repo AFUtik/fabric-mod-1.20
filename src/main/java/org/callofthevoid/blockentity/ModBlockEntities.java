@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.block.ModBlocks;
 import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
+import team.reborn.energy.api.EnergyStorage;
 
 import java.util.function.BiFunction;
 
@@ -26,5 +27,8 @@ public class ModBlockEntities {
                         ModBlocks.EXTRACTOR_BLOCK).build(null));
 
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, EXTRACTOR_BLOCK_ENTITY);
+
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXTRACTOR_BLOCK_ENTITY);
+
     }
 }

@@ -1,13 +1,9 @@
 package org.callofthevoid.blockentity.machines;
 
 import org.callofthevoid.fluid.ModFluids;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,22 +13,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.callofthevoid.network.ModMessages;
 import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.callofthevoid.blockentity.ModBlockEntities;
 import org.callofthevoid.util.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import org.callofthevoid.item.ModItems;
 import org.callofthevoid.screen.ExtractorScreenHandler;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntityTicker<ExtractorBlockEntity> {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
@@ -44,8 +37,38 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     private int progress = 0;
     private int maxProgress = 72;
 
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(30000, 42, 32) {
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+            if(!world.isClient()) {
+                sendEnergyPacket(energyStorage);
+            }
+        }
+    };
+
+    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<FluidVariant>() {
+        @Override
+        protected FluidVariant getBlankVariant() {
+            return FluidVariant.blank();
+        }
+
+        @Override
+        protected long getCapacity(FluidVariant variant) {
+            return FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5; // 5k mB
+        }
+
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+            if(!world.isClient()) {
+                sendFluidPacket(fluidStorage);
+            }
+        }
+    };
+
     public ExtractorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state, FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5);
+        super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -75,6 +98,10 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         return entity.getStack(0).getItem() == ModFluids.SOAP_WATER_BUCKET;
     }
 
+    private static boolean hasEnoughEnergy(ExtractorBlockEntity entity) {
+        return entity.energyStorage.amount >= 32;
+    }
+
     @Override
     public Text getDisplayName() {
         return Text.literal("Extractor");
@@ -90,8 +117,11 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("extractor.progress", progress);
+
         nbt.put("extractor.variant", fluidStorage.variant.toNbt());
         nbt.putLong("extractor.fluid", fluidStorage.amount);
+
+        nbt.putLong("extractor.energy", energyStorage.amount);
     }
 
     @Override
@@ -99,8 +129,11 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
         progress = nbt.getInt("extractor.progress");
+
         fluidStorage.variant = FluidVariant.fromNbt((NbtCompound) nbt.get("extractor.variant"));
         fluidStorage.amount = nbt.getLong("extractor.fluid");
+
+        energyStorage.amount = nbt.getLong("extractor.energy");
     }
 
     @Nullable
@@ -108,9 +141,21 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         super.createMenu(syncId, playerInventory, player);
 
+        sendFluidPacket(fluidStorage);
+
         return new ExtractorScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
 
+    @Override
+    public void setFluidLevel(FluidVariant fluidVariant, long fluidLevel) {
+        this.fluidStorage.variant = fluidVariant;
+        this.fluidStorage.amount = fluidLevel;
+    }
+
+    @Override
+    public void setEnergyLevel(long energyLevel) {
+        this.energyStorage.amount = energyLevel;
+    }
 
     private void resetProgress() {
         this.progress = 0;
@@ -156,16 +201,17 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         if(world.isClient()) {
             return;
         }
-
-        if(isOutputSlotEmptyOrReceivable()) {
+        if(isOutputSlotEmptyOrReceivable() && hasEnoughEnergy(blockEntity)) {
             if(this.hasRecipe()) {
+
                 this.increaseCraftProgress();
                 markDirty(world, pos, state);
 
                 if(hasCraftingFinished()) {
+                    extractEnergy(energyStorage, 32);
                     this.craftItem();
                     this.resetProgress();
-                    transferFluidToFluidStorage(blockEntity, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
+                    transferFluidToFluidStorage(fluidStorage, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
                 }
             } else {
                 this.resetProgress();
