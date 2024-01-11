@@ -68,7 +68,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        propertyDelegate.writeNbt("extractor", nbt);
+        propertyDelegate.writeNbt("extractor.progress", nbt);
 
         nbt.put("extractor.variant", fluidStorage.variant.toNbt());
         nbt.putLong("extractor.fluid", fluidStorage.amount);
@@ -80,7 +80,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        propertyDelegate.readNbt("extractor", nbt);
+        propertyDelegate.readNbt("extractor.progress", nbt);
 
         fluidStorage.variant = FluidVariant.fromNbt((NbtCompound) nbt.get("extractor.variant"));
         fluidStorage.amount = nbt.getLong("extractor.fluid");

@@ -26,11 +26,11 @@ public class SimplePropertyDelegate implements PropertyDelegate {
     }
 
     public void writeNbt(String id, NbtCompound nbt) {
-        nbt.putInt(id + ".progress", progress);
+        nbt.putInt(id, progress);
     }
 
     public void readNbt(String id, NbtCompound nbt) {
-        this.progress = nbt.getInt(id + ".progress");
+        this.progress = nbt.getInt(id);
     }
 
     @Override
