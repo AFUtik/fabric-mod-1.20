@@ -2,6 +2,14 @@ package org.callofthevoid.util;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 
+/*
+ * Kaupenjoe
+ * Copyright (c) 2022
+ *
+ * Under MIT-Licence: https://github.com/Tutorials-By-Kaupenjoe/Fabric-Tutorial-1.19/blob/main/LICENSE
+ *
+ */
+
 public class FluidStack {
     public FluidVariant fluidVariant;
     public long amount;

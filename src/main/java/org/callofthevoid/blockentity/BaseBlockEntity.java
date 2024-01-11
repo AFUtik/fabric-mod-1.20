@@ -14,6 +14,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.FlowableFluid;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -30,8 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
-    private static SingleVariantStorage<FluidVariant> fluidStorage;
-    private static SimpleEnergyStorage energyStorage;
+    SingleVariantStorage<FluidVariant> fluidStorage;
+    SimpleEnergyStorage energyStorage;
     public BaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -57,7 +58,7 @@ public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandle
         }
     }
 
-    protected static void transferFluidToFluidStorage(SingleVariantStorage<FluidVariant> fluidStorage, FlowableFluid fluid, long droplets) {
+    protected void transferFluidToFluidStorage(SingleVariantStorage<FluidVariant> fluidStorage, FlowableFluid fluid, long droplets) {
         try(Transaction transaction = Transaction.openOuter()) {
             fluidStorage.insert(FluidVariant.of(fluid),
                     FluidStack.convertDropletsToMb(droplets), transaction);
@@ -65,14 +66,14 @@ public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandle
         }
     }
 
-    protected static void transferEnergyToEnergyStorage(SimpleEnergyStorage energyStorage, long maxAmount) {
+    protected void transferEnergyToEnergyStorage(SimpleEnergyStorage energyStorage, long maxAmount) {
         try(Transaction transaction = Transaction.openOuter()) {
             energyStorage.insert(maxAmount, transaction);
             transaction.commit();
         }
     }
 
-    protected static void extractFluid(SingleVariantStorage<FluidVariant> fluidStorage, FlowableFluid fluid, long maxAmount) {
+    protected void extractFluid(SingleVariantStorage<FluidVariant> fluidStorage, FlowableFluid fluid, long maxAmount) {
         try(Transaction transaction = Transaction.openOuter()) {
             fluidStorage.extract(FluidVariant.of(fluid),
                     maxAmount, transaction);
@@ -80,11 +81,13 @@ public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandle
         }
     }
 
-    protected static void extractEnergy(SimpleEnergyStorage energyStorage, long maxAmount) {
+    protected void extractEnergy(SimpleEnergyStorage energyStorage, long maxAmount) {
         try(Transaction transaction = Transaction.openOuter()) {
             energyStorage.extract(maxAmount, transaction);
             transaction.commit();
+
         }
+        sendEnergyPacket(energyStorage);
     }
 
     protected static boolean hasEnoughFluid(SingleVariantStorage<FluidVariant> fluidStorage, long amount) {
@@ -140,11 +143,16 @@ public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandle
         }
     }
 
-    public void sync() {
-        if (world != null && !world.isClient) {
-            BlockState state = world.getBlockState(pos);
-            world.updateListeners(pos, state, state, 3);
-        }
+    public boolean canInsertItemIntoOutputSlot(int output_slot, Item item) {
+        return this.getStack(output_slot).getItem() == item || this.getStack(output_slot).isEmpty();
+    }
+
+    public boolean canInsertAmountIntoOutputSlot(int output_slot, ItemStack result) {
+        return this.getStack(output_slot).getCount() + result.getCount() <= getStack(output_slot).getMaxCount();
+    }
+
+    public boolean isOutputSlotEmptyOrReceivable(int output_slot) {
+        return this.getStack(output_slot).isEmpty() || this.getStack(output_slot).getCount() < this.getStack(output_slot).getMaxCount();
     }
 
     @Override

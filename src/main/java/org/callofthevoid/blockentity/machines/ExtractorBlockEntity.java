@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.callofthevoid.blockentity.ModBlockEntities;
 import org.callofthevoid.util.FluidStack;
+import org.callofthevoid.util.SimplePropertyDelegate;
 import org.jetbrains.annotations.Nullable;
 import org.callofthevoid.item.ModItems;
 import org.callofthevoid.screen.ExtractorScreenHandler;
@@ -34,10 +35,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     private static final int[] INPUT_SLOT = {0, 1};
     private static final int OUTPUT_SLOT = 2;
 
-    protected final PropertyDelegate propertyDelegate;
-    private int progress = 0;
-    private int maxProgress = 72;
-
+    protected final SimplePropertyDelegate propertyDelegate;
     public final SimpleEnergyStorage energyStorage;
     public final SingleVariantStorage<FluidVariant> fluidStorage;
 
@@ -45,29 +43,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state);
         this.energyStorage = createSimpleEnergyStorage(30000, 42, 32);
         this.fluidStorage = createSimpleFluidStorage(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5);
-        this.propertyDelegate = new PropertyDelegate() {
-            @Override
-            public int get(int index) {
-                return switch (index) {
-                    case 0 -> ExtractorBlockEntity.this.progress;
-                    case 1 -> ExtractorBlockEntity.this.maxProgress;
-                    default -> 0;
-                };
-            }
-
-            @Override
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0 -> ExtractorBlockEntity.this.progress = value;
-                    case 1 -> ExtractorBlockEntity.this.maxProgress = value;
-                }
-            }
-
-            @Override
-            public int size() {
-                return 3;
-            }
-        };
+        this.propertyDelegate = new SimplePropertyDelegate(72, 3);
     }
 
     private static boolean hasFluidSourceInSlot(ExtractorBlockEntity entity) {
@@ -92,7 +68,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("extractor.progress", progress);
+        propertyDelegate.writeNbt("extractor", nbt);
 
         nbt.put("extractor.variant", fluidStorage.variant.toNbt());
         nbt.putLong("extractor.fluid", fluidStorage.amount);
@@ -104,7 +80,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("extractor.progress");
+        propertyDelegate.readNbt("extractor", nbt);
 
         fluidStorage.variant = FluidVariant.fromNbt((NbtCompound) nbt.get("extractor.variant"));
         fluidStorage.amount = nbt.getLong("extractor.fluid");
@@ -117,6 +93,7 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         super.createMenu(syncId, playerInventory, player);
 
+        sendEnergyPacket(energyStorage);
         sendFluidPacket(fluidStorage);
 
         return new ExtractorScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
@@ -133,10 +110,6 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         this.energyStorage.amount = energyLevel;
     }
 
-    private void resetProgress() {
-        this.progress = 0;
-    }
-
     private void craftItem() {
         this.removeStack(INPUT_SLOT[0], 1);
         this.removeStack(INPUT_SLOT[1], 1);
@@ -145,31 +118,11 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         this.setStack(OUTPUT_SLOT, new ItemStack(result.getItem(), getStack(OUTPUT_SLOT).getCount() + result.getCount()));
     }
 
-    private boolean hasCraftingFinished() {
-        return progress >= maxProgress;
-    }
-
-    private void increaseCraftProgress() {
-        progress++;
-    }
-
     private boolean hasRecipe() {
         ItemStack result = new ItemStack(Items.DIAMOND);
         boolean hasInput = getStack(INPUT_SLOT[0]).getItem() == ModItems.CRUDE_GRAPHITE && getStack(INPUT_SLOT[1]).getItem() == ModItems.CRUDE_GRAPHITE;
 
-        return hasInput && canInsertAmountIntoOutputSlot(result) && canInsertItemIntoOutputSlot(result.getItem());
-    }
-
-    private boolean canInsertItemIntoOutputSlot(Item item) {
-        return this.getStack(OUTPUT_SLOT).getItem() == item || this.getStack(OUTPUT_SLOT).isEmpty();
-    }
-
-    private boolean canInsertAmountIntoOutputSlot(ItemStack result) {
-        return this.getStack(OUTPUT_SLOT).getCount() + result.getCount() <= getStack(OUTPUT_SLOT).getMaxCount();
-    }
-
-    private boolean isOutputSlotEmptyOrReceivable() {
-        return this.getStack(OUTPUT_SLOT).isEmpty() || this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount();
+        return hasInput && canInsertAmountIntoOutputSlot(OUTPUT_SLOT, result) && canInsertItemIntoOutputSlot(OUTPUT_SLOT, result.getItem());
     }
 
     @Override
@@ -177,25 +130,20 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         if(world.isClient()) {
             return;
         }
-        if(isOutputSlotEmptyOrReceivable() ) {
-            if(this.hasRecipe() && hasEnoughEnergy(blockEntity)) {
-                updateState(true);
-                this.increaseCraftProgress();
-                markDirty(world, pos, state);
 
-                if(hasCraftingFinished()) {
-                    extractEnergy(energyStorage, 32);
-                    this.craftItem();
-                    this.resetProgress();
-                    transferFluidToFluidStorage(fluidStorage, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
-
-                };
-            } else {
-                this.resetProgress();
-                updateState(false);
+        if(this.hasRecipe() && hasEnoughEnergy(blockEntity) && isOutputSlotEmptyOrReceivable(OUTPUT_SLOT)) {
+            updateState(true);
+            propertyDelegate.increaseCraftProgress();
+            markDirty(world, pos, state);
+            if(propertyDelegate.hasCraftingFinished()) {
+                extractEnergy(energyStorage, 32);
+                this.craftItem();
+                propertyDelegate.resetProgress();
+                transferFluidToFluidStorage(fluidStorage, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
             }
         } else {
-            this.resetProgress();
+            propertyDelegate.resetProgress();
+            updateState(false);
             markDirty(world, pos, state);
         }
     }

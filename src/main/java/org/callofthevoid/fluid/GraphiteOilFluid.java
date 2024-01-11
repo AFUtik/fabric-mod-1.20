@@ -16,6 +16,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
+/*
+ * Kaupenjoe
+ * Copyright (c) 2022
+ *
+ * Under MIT-Licence: https://github.com/Tutorials-By-Kaupenjoe/Fabric-Tutorial-1.19/blob/main/LICENSE
+ */
+
 public class GraphiteOilFluid extends FlowableFluid {
     @Override
     protected boolean isInfinite(World world) {
