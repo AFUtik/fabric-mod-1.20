@@ -62,7 +62,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     * METHOD FROM https://github.com/TechReborn/TechReborn
     * UNDER MIT LICENSE: https://github.com/TechReborn/TechReborn/blob/1.19/LICENSE.md
     */
-    public void drawFluid(Identifier TEXTURE, DrawContext context, FluidStack fluid, int x, int y, int width, int height, long maxCapacity) {
+    public void drawFluid(Identifier TEXTURE, DrawContext context, FluidStack fluid, int u, int v, int x, int y, int width, int height, long maxCapacity) {
         if (fluid.getFluidVariant().getFluid() == Fluids.EMPTY) {
             return;
         }
@@ -75,7 +75,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         while (offsetHeight != 0) {
             final int curHeight = offsetHeight < height ? offsetHeight : height;
 
-            context.drawTexture(TEXTURE, x, y - offsetHeight, 0, 0, width, curHeight);
+            context.drawTexture(TEXTURE, x, y - offsetHeight, u, v, width, curHeight);
             offsetHeight -= curHeight;
             iteration++;
             if (iteration > 50) {

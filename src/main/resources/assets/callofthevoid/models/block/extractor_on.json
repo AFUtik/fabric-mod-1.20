@@ -3,7 +3,7 @@
   "textures": {
     "top":"callofthevoid:block/new_extractor_top",
     "bottom":"callofthevoid:block/new_extractor_down",
-    "front":"callofthevoid:block/new_extractor_north",
+    "front":"callofthevoid:block/new_extractor_north_on",
     "side": "callofthevoid:block/new_extractor_side"
   }
 }

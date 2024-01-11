@@ -1,5 +1,6 @@
 package org.callofthevoid.blockentity.machines;
 
+import org.callofthevoid.block.BaseCustomBlock;
 import org.callofthevoid.fluid.ModFluids;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -37,38 +38,13 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
     private int progress = 0;
     private int maxProgress = 72;
 
-    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(30000, 42, 32) {
-        @Override
-        protected void onFinalCommit() {
-            markDirty();
-            if(!world.isClient()) {
-                sendEnergyPacket(energyStorage);
-            }
-        }
-    };
-
-    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<FluidVariant>() {
-        @Override
-        protected FluidVariant getBlankVariant() {
-            return FluidVariant.blank();
-        }
-
-        @Override
-        protected long getCapacity(FluidVariant variant) {
-            return FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5; // 5k mB
-        }
-
-        @Override
-        protected void onFinalCommit() {
-            markDirty();
-            if(!world.isClient()) {
-                sendFluidPacket(fluidStorage);
-            }
-        }
-    };
+    public final SimpleEnergyStorage energyStorage;
+    public final SingleVariantStorage<FluidVariant> fluidStorage;
 
     public ExtractorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EXTRACTOR_BLOCK_ENTITY, pos, state);
+        this.energyStorage = createSimpleEnergyStorage(30000, 42, 32);
+        this.fluidStorage = createSimpleFluidStorage(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -201,9 +177,9 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
         if(world.isClient()) {
             return;
         }
-        if(isOutputSlotEmptyOrReceivable() && hasEnoughEnergy(blockEntity)) {
-            if(this.hasRecipe()) {
-
+        if(isOutputSlotEmptyOrReceivable() ) {
+            if(this.hasRecipe() && hasEnoughEnergy(blockEntity)) {
+                updateState(true);
                 this.increaseCraftProgress();
                 markDirty(world, pos, state);
 
@@ -212,9 +188,11 @@ public class ExtractorBlockEntity extends BaseBlockEntity implements BlockEntity
                     this.craftItem();
                     this.resetProgress();
                     transferFluidToFluidStorage(fluidStorage, ModFluids.STILL_GRAPHITE_OIL, FluidConstants.BUCKET);
-                }
+
+                };
             } else {
                 this.resetProgress();
+                updateState(false);
             }
         } else {
             this.resetProgress();

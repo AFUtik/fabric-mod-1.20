@@ -1,5 +1,6 @@
 package org.callofthevoid;
 
+import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import org.callofthevoid.fluid.ModFluids;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;

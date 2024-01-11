@@ -62,7 +62,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         renderProgressArrow(context, x, y);
 
         energyInfoArea.draw(context);
-        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(),
+        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(),
                 fluidStackRenderer.capacityMb);
 
         context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());

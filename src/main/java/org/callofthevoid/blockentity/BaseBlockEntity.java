@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -21,6 +22,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import org.callofthevoid.block.BaseCustomBlock;
 import org.callofthevoid.item.inventory.ImplementedInventory;
 import org.callofthevoid.network.ModMessages;
 import org.callofthevoid.util.FluidStack;
@@ -28,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+    private static SingleVariantStorage<FluidVariant> fluidStorage;
+    private static SimpleEnergyStorage energyStorage;
     public BaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -87,9 +91,61 @@ public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandle
         return fluidStorage.amount >= amount; // mB amount!
     }
 
+    protected SingleVariantStorage<FluidVariant> createSimpleFluidStorage(long capacityFluid) {
+         fluidStorage = new SingleVariantStorage<FluidVariant>() {
+            @Override
+            protected FluidVariant getBlankVariant() {
+                return FluidVariant.blank();
+            }
+
+            @Override
+            protected long getCapacity(FluidVariant variant) {
+                return capacityFluid;
+            }
+
+            @Override
+            protected void onFinalCommit() {
+                markDirty();
+                if(!world.isClient()) {
+                    sendFluidPacket(fluidStorage);
+                }
+            }
+        };
+        return fluidStorage;
+    }
+
+    protected SimpleEnergyStorage createSimpleEnergyStorage(long capacity, long maxInsert, long maxExtract) {
+        energyStorage = new SimpleEnergyStorage(capacity, maxInsert, maxExtract) {
+            @Override
+            protected void onFinalCommit() {
+                markDirty();
+                if (!world.isClient()) {
+                    sendEnergyPacket(energyStorage);
+                }
+            }
+        };
+        return energyStorage;
+    }
+
     public void setFluidLevel(FluidVariant fluidVariant, long fluidLevel) {}
 
     public void setEnergyLevel(long energyLevel) {}
+
+    public void updateState(boolean active) {
+        final BlockState BlockStateContainer = world.getBlockState(pos);
+        if (BlockStateContainer.getBlock() instanceof final BaseCustomBlock baseCustomBlock){
+            if (BlockStateContainer.get(BaseCustomBlock.ACTIVE) != active)  {
+                baseCustomBlock.setActive(active, world, pos);
+            }
+        }
+    }
+
+    public void sync() {
+        if (world != null && !world.isClient) {
+            BlockState state = world.getBlockState(pos);
+            world.updateListeners(pos, state, state, 3);
+        }
+    }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {

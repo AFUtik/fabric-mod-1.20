@@ -9,17 +9,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.callofthevoid.blockentity.BaseBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseCustomBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final BooleanProperty ACTIVE = BooleanProperty.of("active");
 
     protected BaseCustomBlock(Settings settings) {
         super(settings);
@@ -27,7 +30,7 @@ public class BaseCustomBlock extends Block implements BlockEntityProvider {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite()).with(ACTIVE, false);
     }
 
     @Override
@@ -42,7 +45,13 @@ public class BaseCustomBlock extends Block implements BlockEntityProvider {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ACTIVE);
+    }
+
+    public void setActive(Boolean active, World world, BlockPos pos) {
+        Direction facing = world.getBlockState(pos).get(FACING);
+        BlockState state = world.getBlockState(pos).with(ACTIVE, active).with(FACING, facing);
+        world.setBlockState(pos, state, 3);
     }
 
     /* BLOCK ENTITY */

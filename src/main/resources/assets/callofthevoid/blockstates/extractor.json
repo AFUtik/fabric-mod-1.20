@@ -1,8 +1,13 @@
 {
   "variants": {
-    "facing=north": { "model": "callofthevoid:block/extractor" },
-    "facing=east": { "model": "callofthevoid:block/extractor", "y": 90 },
-    "facing=south": { "model": "callofthevoid:block/extractor", "y": 180 },
-    "facing=west": { "model": "callofthevoid:block/extractor", "y": 270 }
+    "facing=north,active=false": { "model": "callofthevoid:block/extractor" },
+    "facing=east,active=false": { "model": "callofthevoid:block/extractor", "y": 90 },
+    "facing=south,active=false": { "model": "callofthevoid:block/extractor", "y": 180 },
+    "facing=west,active=false": { "model": "callofthevoid:block/extractor", "y": 270 },
+
+    "facing=north,active=true": { "model": "callofthevoid:block/extractor_on" },
+    "facing=east,active=true": { "model": "callofthevoid:block/extractor_on", "y": 90 },
+    "facing=south,active=true": { "model": "callofthevoid:block/extractor_on", "y": 180 },
+    "facing=west,active=true": { "model": "callofthevoid:block/extractor_on", "y": 270 }
   }
 }
