@@ -8,6 +8,7 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.util.FluidStack;
+import org.callofthevoid.util.SimplePropertyDelegate;
 
 public class ExtractorScreenHandler extends BaseScreenHandler {
     public final PropertyDelegate propertyDelegate;

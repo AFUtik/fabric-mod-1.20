@@ -35,11 +35,11 @@ public class BaseScreenHandler extends ScreenHandler {
         addPlayerHotbar(playerInventory);
     }
 
-    protected void addSlot(int index, int x, int y) {
+    public void addSlot(int index, int x, int y) {
         this.addSlot(new Slot(inventory, index, x, y));
     }
 
-    protected void addOutputSlot(int index, int x, int y) {
+    public void addOutputSlot(int index, int x, int y) {
         this.addSlot(new OutputSlot(inventory, index, x, y));
     }
 

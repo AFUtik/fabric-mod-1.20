@@ -8,14 +8,19 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.screen.renderer.EnergyInfoArea;
 import org.callofthevoid.screen.renderer.FluidStackRenderer;
+import org.callofthevoid.screen.renderer.TabRenderer;
+import org.callofthevoid.screen.tabs.Tab;
 import org.callofthevoid.util.FluidStack;
 import org.callofthevoid.util.MouseUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
@@ -24,6 +29,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
     EnergyInfoArea energyInfoArea;
     FluidStackRenderer fluidStackRenderer;
+    TabRenderer tabRenderer;
 
     public ExtractorScreen(ExtractorScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -37,6 +43,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         assignEnergyInfoArea();
         assignFluidStackRenderer();
+        assingTabManager();
     }
 
     private void assignFluidStackRenderer() {
@@ -47,6 +54,25 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     private void assignEnergyInfoArea() {
         energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2) + 161,
                 ((height - backgroundHeight) / 2 ) + 8, handler.blockEntity.energyStorage, 8, 69);
+    }
+
+    private void assingTabManager() {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+
+        this.tabRenderer = new TabRenderer(20, 20, x, y, 1, 3, 3);
+
+        this.tabRenderer.addTab(new Tab(List.of(Text.literal("Redstone Tab").setStyle(Style.EMPTY.withColor(Formatting.GOLD))),
+                0, 0));
+        this.tabRenderer.addTab(new Tab(List.of(Text.literal("Campfire Tab").setStyle(Style.EMPTY.withColor(Formatting.GOLD))),
+                tabRenderer.getWeight() * 1, 1));
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        tabRenderer.mouseClick(mouseX, mouseY);
+
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -62,8 +88,8 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         renderProgressArrow(context, x, y);
 
         energyInfoArea.draw(context);
-        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(),
-                fluidStackRenderer.capacityMb);
+        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(), fluidStackRenderer.capacityMb);
+        tabRenderer.draw(context);
 
         context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
     }
@@ -76,6 +102,8 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
         renderEnergyAreaTooltips(context, mouseX, mouseY, x, y);
         renderProgressArrowTooltips(context, mouseX, mouseY, x, y);
+
+        tabRenderer.renderTooltip(context, client.textRenderer, mouseX, mouseY);
     }
 
     private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
