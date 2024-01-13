@@ -1,6 +1,6 @@
 package org.callofthevoid;
 
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import org.callofthevoid.events.ItemTooltips;
 import org.callofthevoid.fluid.ModFluids;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -24,6 +24,8 @@ public class CallOfTheVoidClient implements ClientModInitializer {
 						new Identifier("minecraft:block/water_flow"),
 						0xA1E038D0
 				));
+
+		ItemTooltips.register();
 
 		BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(),
 				ModFluids.STILL_GRAPHITE_OIL, ModFluids.FLOWING_GRAPHITE_OIL);

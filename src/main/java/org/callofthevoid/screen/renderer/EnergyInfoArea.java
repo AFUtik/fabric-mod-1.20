@@ -2,7 +2,9 @@ package org.callofthevoid.screen.renderer;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.Rect2i;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import team.reborn.energy.api.EnergyStorage;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class EnergyInfoArea extends InfoArea {
     }
 
     public List<Text> getTooltips() {
-        return List.of(Text.literal(energy.getAmount()+"/"+energy.getCapacity()+" E"));
+        return List.of(Text.literal(energy.getAmount()+"/"+energy.getCapacity()+" E").setStyle(Style.EMPTY.withColor(Formatting.RED)));
     }
 
     @Override

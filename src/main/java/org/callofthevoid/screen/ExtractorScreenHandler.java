@@ -10,7 +10,7 @@ import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.util.FluidStack;
 
 public class ExtractorScreenHandler extends BaseScreenHandler {
-    private final PropertyDelegate propertyDelegate;
+    public final PropertyDelegate propertyDelegate;
     public FluidStack fluidStack;
     public final ExtractorBlockEntity blockEntity;
 
@@ -41,14 +41,6 @@ public class ExtractorScreenHandler extends BaseScreenHandler {
 
     public boolean isCrafting() {
         return propertyDelegate.get(0) > 0;
-    }
-
-    public int getScaledProgress() {
-        int progress = this.propertyDelegate.get(0);
-        int maxProgress = this.propertyDelegate.get(1);  // Max Progress
-        int progressArrowSize = 22; // This is the width in pixels of your arrow
-
-        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 
 }

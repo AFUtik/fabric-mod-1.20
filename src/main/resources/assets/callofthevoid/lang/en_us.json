@@ -9,6 +9,9 @@
   "block.callofthevoid.temperature_regulator": "Temperature regulator",
   "block.callofthevoid.body": "Body",
 
+  "block.callofthevoid.extractor.description": "This is a custom tooltip",
+  "block.callofthevoid.accumulator.description": "This is a custom tooltip",
+
   "block.callofthevoid.graphite_oil": "Graphite Oil",
   "block.minecraft.empty": "Empty",
 

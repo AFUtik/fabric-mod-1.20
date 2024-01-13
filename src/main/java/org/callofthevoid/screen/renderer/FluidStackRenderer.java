@@ -93,6 +93,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         }
 
         MutableText displayName = Text.translatable("block." + Registries.FLUID.getId(fluidStack.fluidVariant.getFluid()).toTranslationKey());
+        displayName.setStyle(Style.EMPTY.withColor(Formatting.GOLD));
         tooltip.add(displayName);
 
         long amount = fluidStack.getAmount();

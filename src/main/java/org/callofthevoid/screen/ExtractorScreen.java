@@ -75,6 +75,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
         renderEnergyAreaTooltips(context, mouseX, mouseY, x, y);
+        renderProgressArrowTooltips(context, mouseX, mouseY, x, y);
     }
 
     private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
@@ -87,14 +88,21 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
     private void renderEnergyAreaTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
         if(isMouseAboveArea(pMouseX, pMouseY, x, y, 161, 8, 8, 69)) {
-            context.drawTooltip(MinecraftClient.getInstance().textRenderer, energyInfoArea.getTooltips(),
+            context.drawTooltip(client.textRenderer, energyInfoArea.getTooltips(),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
+        }
+    }
+
+    private void renderProgressArrowTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 87, 33, 22, 15)) {
+            context.drawTooltip(client.textRenderer, handler.getPercent(handler.propertyDelegate),
                     Optional.empty(), pMouseX - x, pMouseY - y);
         }
     }
 
     private void renderProgressArrow(DrawContext context, int x, int y) {
         if(handler.isCrafting()) {
-            context.drawTexture(TEXTURE, x + 87, y + 33, 176, 0, handler.getScaledProgress(), 15);
+            context.drawTexture(TEXTURE, x + 87, y + 33, 176, 0, handler.getScaledProgress(handler.propertyDelegate, 22), 15);
         }
     }
 

@@ -5,14 +5,21 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.callofthevoid.blockentity.BaseBlockEntity;
-import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.screen.slot.OutputSlot;
 import org.callofthevoid.util.FluidStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseScreenHandler extends ScreenHandler {
     private final Inventory inventory;
@@ -63,6 +70,23 @@ public class BaseScreenHandler extends ScreenHandler {
 
     public void setFluid(FluidStack stack) {
 
+    }
+
+    public int getScaledProgress(PropertyDelegate propertyDelegate, int progressArrowSize) {
+        int progress = propertyDelegate.get(0);
+        int maxProgress = propertyDelegate.get(1);  // Max Progress
+
+        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
+    }
+
+    public List<Text> getPercent(PropertyDelegate propertyDelegate) {
+        List<Text> tooltip = new ArrayList<>();
+        MutableText text = Text.literal((int) ((float) propertyDelegate.get(0) / propertyDelegate.get(1) * 100.0f) + "%");
+        text.setStyle(Style.EMPTY.withColor(Formatting.YELLOW));
+
+        tooltip.add(text);
+
+        return tooltip;
     }
 
     @Override

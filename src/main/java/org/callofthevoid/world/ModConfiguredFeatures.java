@@ -26,11 +26,11 @@ public class ModConfiguredFeatures {
         RuleTest netherReplacables = new TagMatchRuleTest(BlockTags.BASE_STONE_NETHER);
         RuleTest endReplacables = new BlockMatchRuleTest(Blocks.END_STONE);
 
-        List<OreFeatureConfig.Target> overworldRubyOres =
+        List<OreFeatureConfig.Target> overworldGraphiteOres =
                 List.of(OreFeatureConfig.createTarget(stoneReplacables, ModBlocks.GRAPHITE_ORE_BLOCK.getDefaultState()),
                         OreFeatureConfig.createTarget(deepslateReplacables, ModBlocks.GRAPHITE_ORE_BLOCK.getDefaultState()));
 
-        register(context, GRAPHITE_ORE_KEY, Feature.ORE, new OreFeatureConfig(overworldRubyOres, 12));
+        register(context, GRAPHITE_ORE_KEY, Feature.ORE, new OreFeatureConfig(overworldGraphiteOres, 12));
     }
 
     public static RegistryKey<ConfiguredFeature<?, ?>> registerKey(String name) {

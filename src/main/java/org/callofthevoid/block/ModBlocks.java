@@ -17,9 +17,9 @@ import org.callofthevoid.item.ModItemsGroups;
 public class ModBlocks  {
     public static Block GRAPHITE_ORE_BLOCK = registerBlock("graphite_ore", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
     public static Block EXTRACTOR_BLOCK = registerBlock("extractor", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), ExtractorBlockEntity::new), ModItemsGroups.NEW_GROUP);
-    public static Block ACCUMULATOR_BLOCK = registerBlock("accumulator", new BaseCustomBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
-    public static Block BOILER_BLOCK = registerBlock("boiler", new BaseCustomBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
-    public static Block TEMPERATURE_REGULATOR_BLOCK = registerBlock("temperature_regulator", new BaseCustomBlock(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
+    public static Block ACCUMULATOR_BLOCK = registerBlock("accumulator", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), null), ModItemsGroups.NEW_GROUP);
+    public static Block BOILER_BLOCK = registerBlock("boiler", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), null), ModItemsGroups.NEW_GROUP);
+    public static Block TEMPERATURE_REGULATOR_BLOCK = registerBlock("temperature_regulator", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), null), ModItemsGroups.NEW_GROUP);
     public static Block BODY_BLOCK = registerBlock("body", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
     private static Block registerBlock(String id, Block block) {
