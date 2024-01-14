@@ -1,0 +1,6 @@
+{
+  "parent":"minecraft:block/cube_all",
+  "textures": {
+    "all":"callofthevoid:block/sawdust_block"
+  }
+}

@@ -32,6 +32,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 public class BaseBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
     SingleVariantStorage<FluidVariant> fluidStorage;
     SimpleEnergyStorage energyStorage;
+
     public BaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }

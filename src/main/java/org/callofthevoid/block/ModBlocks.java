@@ -22,6 +22,8 @@ public class ModBlocks  {
     public static Block TEMPERATURE_REGULATOR_BLOCK = registerBlock("temperature_regulator", new GenericCustomBlock(FabricBlockSettings.create().strength(4.0f), null), ModItemsGroups.NEW_GROUP);
     public static Block BODY_BLOCK = registerBlock("body", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
 
+    public static Block SAWDUST_BLOCK = registerBlock("sawdust_block", new Block(FabricBlockSettings.create().strength(4.0f)), ModItemsGroups.NEW_GROUP);
+
     private static Block registerBlock(String id, Block block) {
         ModItems.registerItem(id, new BlockItem(block, new FabricItemSettings()));
 

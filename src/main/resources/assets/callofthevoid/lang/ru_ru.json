@@ -2,6 +2,18 @@
   "item.callofthevoid.crude_graphite": "Сырой графен",
   "item.callofthevoid.pocket_workbench": "Карманный верстак",
   "block.callofthevoid.graphite_ore": "Графитовая руда",
+  "item.callofthevoid.iron_plate": "Железная пластина",
+  "item.callofthevoid.copper_plate": "Медная пластина",
+  "item.callofthevoid.iron_wire": "Железная проволка",
+  "item.callofthevoid.copper_wire": "Медная проволка",
+  "item.callofthevoid.latex_ball": "Резиновый шар",
+  "item.callofthevoid.scheme": "Схема",
+  "item.callofthevoid.microcircuit": "Микросхема",
+  "item.callofthevoid.sawdust": "Опилки",
+  "item.callofthevoid.bulb": "Лампочка",
+  "item.callofthevoid.sensor": "Сенсор",
+  "item.callofthevoid.wrench": "Гаечный ключ",
+  "item.callofthevoid.battery": "Батарея",
 
   "block.callofthevoid.extractor": "Экстрактор",
   "block.callofthevoid.accumulator": "Накопитель энергии",
@@ -9,8 +21,8 @@
   "block.callofthevoid.temperature_regulator": "Регулятор температуры",
   "block.callofthevoid.body": "Корпус",
 
-  "block.callofthevoid.graphite_oil": "Графелин",
-  "block.minecraft.empty": "Пусто",
+  "block.callofthevoid.sawdust_block": "Блок опилок",
 
-  "itemGroup.callofthevoid.new_group": "Зов Пустоты"
+  "block.callofthevoid.graphite_oil": "Графелин",
+  "block.minecraft.empty": "Пусто"
 }

@@ -3,6 +3,7 @@ package org.callofthevoid.screen.renderer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.screen.tabs.Tab;
@@ -14,26 +15,31 @@ import java.util.Optional;
 
 public class TabRenderer extends TabManager {
     private static final Identifier ICONS = new Identifier(CallOfTheVoid.MOD_ID, "textures/gui/icons.png");
-    private final int space; //Space between tabs
-    private final int weight; // Weight of a tab in pixels
-    private final int height; // Height of a tab in pixels
+    private final int space = 3; //Space between tabs
+    private final int width = 20; // Weight of a tab in pixels
+    private final int height = 20; // Height of a tab in pixels
+
+    private final int offsetX = 1;
+    private final int offsetY = 2;
 
     private int x;
     private int y;
-    public TabRenderer(int weight, int height, int x, int y, int offsetX, int offsetY, int space) {
-        this.x = x - (weight + offsetX);
+    public TabRenderer(int x, int y) {
+        this.x = x - (width + offsetX);
         this.y = y + offsetY;
-        this.weight = weight;
-        this.height = height;
-        this.space = space;
     }
+
+    public void addDefaultTabs() {
+        this.addTab("Redstone Mode", Formatting.RED, 0, 0);
+    }
+
     public void draw(DrawContext context) {
         int offsetHeight = 0;
         for (Tab tab : tabs) {
             if (tab.isHasClicked()) {
-                context.drawTexture(ICONS, this.x, this.y + offsetHeight, tab.getIconOffset(), 0, weight, height);
+                context.drawTexture(ICONS, this.x, this.y + offsetHeight, tab.getIconOffset(), 0, width, height);
             } else {
-                context.drawTexture(ICONS, this.x, this.y + offsetHeight, tab.getIconOffset(), 20, weight, height);
+                context.drawTexture(ICONS, this.x, this.y + offsetHeight, tab.getIconOffset(), 20, width, height);
             }
             offsetHeight += this.height + this.space;
         }
@@ -41,9 +47,9 @@ public class TabRenderer extends TabManager {
 
     public void renderTooltip(DrawContext context, TextRenderer textRenderer, int pMouseX, int pMouseY) {
         Tab shownTab = this.getTab(pMouseX, pMouseY);
-        if (shownTab != null && isMouseAboveArea(pMouseX, pMouseY, x, y, 0, shownTab.getIndex() * (height + space), weight, height)) {
+        if (shownTab != null && isMouseAboveArea(pMouseX, pMouseY, x, y, 0, shownTab.getIndex() * (height + space), width, height)) {
             context.drawTooltip(textRenderer, this.getTooltip(shownTab),
-                    Optional.empty(), pMouseX - (this.x + weight), pMouseY - this.y);
+                    Optional.empty(), pMouseX - (this.x + width), pMouseY - this.y);
         }
     }
 
@@ -57,10 +63,10 @@ public class TabRenderer extends TabManager {
     private Tab getTab(int pMouseX, int pMouseY) {
         int offsetY = 0;
         for (Tab tab : tabs) {
-            if(isMouseAboveArea(pMouseX, pMouseY, this.x, this.y, 0, offsetY, this.weight, this.height)) {
+            if(isMouseAboveArea(pMouseX, pMouseY, this.x, this.y, 0, offsetY, this.width, this.height)) {
                 return tab;
             } else {
-                offsetY += weight + space;
+                offsetY += width + space;
             }
         }
         return null;
@@ -79,6 +85,6 @@ public class TabRenderer extends TabManager {
     }
 
     public int getWeight() {
-        return this.weight;
+        return this.width;
     }
 }

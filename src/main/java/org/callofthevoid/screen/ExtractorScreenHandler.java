@@ -8,7 +8,6 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import org.callofthevoid.blockentity.machines.ExtractorBlockEntity;
 import org.callofthevoid.util.FluidStack;
-import org.callofthevoid.util.SimplePropertyDelegate;
 
 public class ExtractorScreenHandler extends BaseScreenHandler {
     public final PropertyDelegate propertyDelegate;
@@ -38,10 +37,6 @@ public class ExtractorScreenHandler extends BaseScreenHandler {
     @Override
     public void setFluid(FluidStack stack) {
         fluidStack = stack;
-    }
-
-    public boolean isCrafting() {
-        return propertyDelegate.get(0) > 0;
     }
 
 }

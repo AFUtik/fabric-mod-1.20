@@ -1,6 +1,9 @@
 package org.callofthevoid.screen;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -13,13 +16,18 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.callofthevoid.blockentity.BaseBlockEntity;
+import org.callofthevoid.screen.renderer.EnergyInfoArea;
+import org.callofthevoid.screen.renderer.FluidStackRenderer;
 import org.callofthevoid.screen.slot.OutputSlot;
 import org.callofthevoid.util.FluidStack;
+import org.callofthevoid.util.MouseUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BaseScreenHandler extends ScreenHandler {
     private final Inventory inventory;
@@ -68,18 +76,52 @@ public class BaseScreenHandler extends ScreenHandler {
         return newStack;
     }
 
-    public void setFluid(FluidStack stack) {
+    public void setFluid(FluidStack stack) {}
 
+    @Override
+    public boolean canUse(PlayerEntity player) {
+        return this.inventory.canPlayerUse(player);
     }
 
-    public int getScaledProgress(PropertyDelegate propertyDelegate, int progressArrowSize) {
+    protected void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
+                                    FluidStack fluidStack, int offsetX, int offsetY, FluidStackRenderer renderer) {
+        if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
+            context.drawTooltip(MinecraftClient.getInstance().textRenderer, renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
+                    Optional.empty(), mouseX - x, mouseY - y);
+        }
+    }
+
+    protected void renderProgressArrowTooltip(DrawContext context, int pMouseX, int pMouseY, int x, int y,
+                                              PropertyDelegate propertyDelegate, int offsetX, int offsetY,
+                                              int width, int height) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, offsetX, offsetY, width, height)) { //87, 33, 22, 15
+            context.drawTooltip(MinecraftClient.getInstance().textRenderer, this.getPercent(propertyDelegate),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
+        }
+    }
+
+    protected void renderEnergyAreaTooltip(DrawContext context, int pMouseX, int pMouseY, int x, int y,
+                                           EnergyInfoArea energyInfoArea, int offsetX, int offsetY,
+                                           int width, int height) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, offsetX, offsetY, width, height)) { //161 8 8 69
+            context.drawTooltip(MinecraftClient.getInstance().textRenderer, energyInfoArea.getTooltips(),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
+        }
+    }
+    private int getScaledProgress(PropertyDelegate propertyDelegate, int progressArrowSize) {
         int progress = propertyDelegate.get(0);
         int maxProgress = propertyDelegate.get(1);  // Max Progress
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 
-    public List<Text> getPercent(PropertyDelegate propertyDelegate) {
+    protected void renderProgressArrow(Identifier texture, DrawContext context, int x, int y,
+                                     PropertyDelegate propertyDelegate,int offsetX, int offsetY, int u, int v) {
+        if(this.isCrafting(propertyDelegate)) { // 176
+            context.drawTexture(texture, x + offsetX, y + offsetY, u, v, this.getScaledProgress(propertyDelegate, 22), 15);
+        }
+    }
+    private List<Text> getPercent(PropertyDelegate propertyDelegate) {
         List<Text> tooltip = new ArrayList<>();
         MutableText text = Text.literal((int) ((float) propertyDelegate.get(0) / propertyDelegate.get(1) * 100.0f) + "%");
         text.setStyle(Style.EMPTY.withColor(Formatting.YELLOW));
@@ -89,9 +131,8 @@ public class BaseScreenHandler extends ScreenHandler {
         return tooltip;
     }
 
-    @Override
-    public boolean canUse(PlayerEntity player) {
-        return this.inventory.canPlayerUse(player);
+    private boolean isCrafting(PropertyDelegate propertyDelegate) {
+        return propertyDelegate.get(0) > 0;
     }
 
     private void addPlayerInventory(PlayerInventory playerInventory) {
@@ -106,5 +147,13 @@ public class BaseScreenHandler extends ScreenHandler {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
         }
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, FluidStackRenderer renderer) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
+    }
+
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }
 }

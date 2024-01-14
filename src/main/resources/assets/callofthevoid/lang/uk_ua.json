@@ -2,10 +2,27 @@
   "item.callofthevoid.crude_graphite": "Сирий графен",
   "item.callofthevoid.pocket_workbench": "Кишеньковий верстак",
   "block.callofthevoid.graphite_ore": "Графітова руда",
+  "item.callofthevoid.iron_plate": "Залізна пластина",
+  "item.callofthevoid.copper_plate": "Мідна пластина",
+  "item.callofthevoid.iron_wire": "Залізний дріт",
+  "item.callofthevoid.copper_wire": "Мідний дріт",
+  "item.callofthevoid.latex_ball": "Гумова куля",
+  "item.callofthevoid.scheme": "Схема",
+  "item.callofthevoid.microcircuit": "Мікросхема",
+  "item.callofthevoid.sawdust": "Тирса",
+  "item.callofthevoid.bulb": "Лампочка",
+  "item.callofthevoid.sensor": "Сенсор",
+  "item.callofthevoid.wrench": "Гайковий ключ",
+  "item.callofthevoid.battery": "Батарея",
 
   "block.callofthevoid.extractor": "Екстрактор",
   "block.callofthevoid.accumulator": "Накопичувач енергії",
   "block.callofthevoid.boiler": "Паровий котел",
+  "block.callofthevoid.temperature_regulator": "Регулятор температури",
+  "block.callofthevoid.body": "Корпус",
 
-  "itemGroup.callofthevoid.new_group": "Call of The void"
+  "block.callofthevoid.sawdust_block": "Блок тирси",
+
+  "block.callofthevoid.graphite_oil": "Графелін",
+  "block.minecraft.empty": "Порожньо"
 }

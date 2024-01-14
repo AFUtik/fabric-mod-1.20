@@ -2,13 +2,10 @@ package org.callofthevoid.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -16,16 +13,10 @@ import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.screen.renderer.EnergyInfoArea;
 import org.callofthevoid.screen.renderer.FluidStackRenderer;
 import org.callofthevoid.screen.renderer.TabRenderer;
-import org.callofthevoid.screen.tabs.Tab;
 import org.callofthevoid.util.FluidStack;
-import org.callofthevoid.util.MouseUtil;
-
-import java.util.List;
-import java.util.Optional;
 
 public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(CallOfTheVoid.MOD_ID, "textures/gui/gui-extractor.png");
-    private static final Identifier fluidTex = new Identifier(CallOfTheVoid.MOD_ID, "textures/fluids/fluids.png");
 
     EnergyInfoArea energyInfoArea;
     FluidStackRenderer fluidStackRenderer;
@@ -48,7 +39,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
     private void assignFluidStackRenderer() {
         fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5,
-                true, 12, 50);
+                true, 12, 50, Formatting.GOLD);
     }
 
     private void assignEnergyInfoArea() {
@@ -57,15 +48,9 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
     }
 
     private void assingTabManager() {
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+        this.tabRenderer = new TabRenderer((width - backgroundWidth) / 2, (height - backgroundHeight) / 2);
 
-        this.tabRenderer = new TabRenderer(20, 20, x, y, 1, 3, 3);
-
-        this.tabRenderer.addTab(new Tab(List.of(Text.literal("Redstone Tab").setStyle(Style.EMPTY.withColor(Formatting.GOLD))),
-                0, 0));
-        this.tabRenderer.addTab(new Tab(List.of(Text.literal("Campfire Tab").setStyle(Style.EMPTY.withColor(Formatting.GOLD))),
-                tabRenderer.getWeight() * 1, 1));
+        this.tabRenderer.addDefaultTabs();
     }
 
     @Override
@@ -85,10 +70,10 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
-        renderProgressArrow(context, x, y);
+        handler.renderProgressArrow(TEXTURE, context, x, y, handler.propertyDelegate, 87, 33, 176, 0);
 
         energyInfoArea.draw(context);
-        fluidStackRenderer.drawFluid(fluidTex, context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight(), fluidStackRenderer.capacityMb);
+        fluidStackRenderer.drawFluid(context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.capacityMb);
         tabRenderer.draw(context);
 
         context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
@@ -99,39 +84,11 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
-        renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
-        renderEnergyAreaTooltips(context, mouseX, mouseY, x, y);
-        renderProgressArrowTooltips(context, mouseX, mouseY, x, y);
+        handler.renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
+        handler.renderEnergyAreaTooltip(context, mouseX, mouseY, x, y, this.energyInfoArea, 161, 8, 8, 69);
+        handler.renderProgressArrowTooltip(context, mouseX, mouseY, x, y, handler.propertyDelegate, 87, 33, 22, 15);
 
         tabRenderer.renderTooltip(context, client.textRenderer, mouseX, mouseY);
-    }
-
-    private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
-                                    FluidStack fluidStack, int offsetX, int offsetY, FluidStackRenderer renderer) {
-        if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
-            context.drawTooltip(MinecraftClient.getInstance().textRenderer, renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
-                    Optional.empty(), mouseX - x, mouseY - y);
-        }
-    }
-
-    private void renderEnergyAreaTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
-        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 161, 8, 8, 69)) {
-            context.drawTooltip(client.textRenderer, energyInfoArea.getTooltips(),
-                    Optional.empty(), pMouseX - x, pMouseY - y);
-        }
-    }
-
-    private void renderProgressArrowTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
-        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 87, 33, 22, 15)) {
-            context.drawTooltip(client.textRenderer, handler.getPercent(handler.propertyDelegate),
-                    Optional.empty(), pMouseX - x, pMouseY - y);
-        }
-    }
-
-    private void renderProgressArrow(DrawContext context, int x, int y) {
-        if(handler.isCrafting()) {
-            context.drawTexture(TEXTURE, x + 87, y + 33, 176, 0, handler.getScaledProgress(handler.propertyDelegate, 22), 15);
-        }
     }
 
     @Override
@@ -139,13 +96,5 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
-    }
-
-    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, FluidStackRenderer renderer) {
-        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
-    }
-
-    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
-        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }
 }

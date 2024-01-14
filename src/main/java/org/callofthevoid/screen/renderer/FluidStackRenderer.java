@@ -1,11 +1,11 @@
 package org.callofthevoid.screen.renderer;
 
 import com.google.common.base.Preconditions;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import org.callofthevoid.CallOfTheVoid;
 import org.callofthevoid.util.FluidStack;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.fluid.Fluids;
@@ -17,16 +17,19 @@ import net.minecraft.util.Formatting;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // CREDIT: https://github.com/mezz/JustEnoughItems by mezz (Forge Version)
 // HIGHLY EDITED VERSION FOR FABRIC by Kaupenjoe
 // Under MIT-License: https://github.com/mezz/JustEnoughItems/blob/1.18/LICENSE.txt
 public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
+    private static final Identifier FLUID_TEX = new Identifier(CallOfTheVoid.MOD_ID, "textures/fluids/fluids.png");
     private static final NumberFormat nf = NumberFormat.getIntegerInstance();
     public final long capacityMb;
     private final TooltipMode tooltipMode;
     private final int width;
     private final int height;
+    private Formatting formatting;
 
     enum TooltipMode {
         SHOW_AMOUNT,
@@ -34,21 +37,17 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         ITEM_LIST
     }
 
-    public FluidStackRenderer() {
-        this(FluidStack.convertDropletsToMb(FluidConstants.BUCKET), TooltipMode.SHOW_AMOUNT_AND_CAPACITY, 16, 16);
-    }
-
-    public FluidStackRenderer(long capacityMb, boolean showCapacity, int width, int height) {
-        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height);
+    public FluidStackRenderer(long capacityMb, boolean showCapacity, int width, int height, Formatting formatting) {
+        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, formatting);
     }
 
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    public FluidStackRenderer(int capacityMb, boolean showCapacity, int width, int height) {
-        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height);
+    public FluidStackRenderer(int capacityMb, boolean showCapacity, int width, int height, Formatting formatting) {
+        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, formatting);
     }
 
-    private FluidStackRenderer(long capacityMb, TooltipMode tooltipMode, int width, int height) {
+    private FluidStackRenderer(long capacityMb, TooltipMode tooltipMode, int width, int height, Formatting formatting) {
         Preconditions.checkArgument(capacityMb > 0, "capacity must be > 0");
         Preconditions.checkArgument(width > 0, "width must be > 0");
         Preconditions.checkArgument(height > 0, "height must be > 0");
@@ -56,26 +55,27 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         this.tooltipMode = tooltipMode;
         this.width = width;
         this.height = height;
+        this.formatting = formatting;
     }
 
     /*
     * METHOD FROM https://github.com/TechReborn/TechReborn
     * UNDER MIT LICENSE: https://github.com/TechReborn/TechReborn/blob/1.19/LICENSE.md
     */
-    public void drawFluid(Identifier TEXTURE, DrawContext context, FluidStack fluid, int u, int v, int x, int y, int width, int height, long maxCapacity) {
+    public void drawFluid(DrawContext context, FluidStack fluid, int u, int v, int x, int y, long maxCapacity) {
         if (fluid.getFluidVariant().getFluid() == Fluids.EMPTY) {
             return;
         }
-        y += height;
+        y += this.height;
 
-        final int drawHeight = (int) (fluid.getAmount() / (maxCapacity * 1F) * height);
+        final int drawHeight = (int) (fluid.getAmount() / (maxCapacity * 1F) * this.height);
         int offsetHeight = drawHeight;
 
         int iteration = 0;
         while (offsetHeight != 0) {
-            final int curHeight = offsetHeight < height ? offsetHeight : height;
+            final int curHeight = offsetHeight < this.height ? offsetHeight : this.height;
 
-            context.drawTexture(TEXTURE, x, y - offsetHeight, u, v, width, curHeight);
+            context.drawTexture(FLUID_TEX, x, y - offsetHeight, u, v, width, curHeight);
             offsetHeight -= curHeight;
             iteration++;
             if (iteration > 50) {
@@ -92,8 +92,14 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
             return tooltip;
         }
 
-        MutableText displayName = Text.translatable("block." + Registries.FLUID.getId(fluidStack.fluidVariant.getFluid()).toTranslationKey());
-        displayName.setStyle(Style.EMPTY.withColor(Formatting.GOLD));
+
+        String fluid = Registries.FLUID.getId(fluidStack.fluidVariant.getFluid()).toTranslationKey();
+        MutableText displayName = Text.translatable("block." + fluid);
+        if (Objects.equals(fluid, "minecraft.empty")) {
+            displayName.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY));
+        } else {
+            displayName.setStyle(Style.EMPTY.withColor(formatting));
+        }
         tooltip.add(displayName);
 
         long amount = fluidStack.getAmount();

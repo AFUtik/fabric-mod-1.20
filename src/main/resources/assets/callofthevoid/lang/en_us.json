@@ -1,6 +1,19 @@
 {
   "item.callofthevoid.crude_graphite": "Crude Graphite",
   "item.callofthevoid.pocket_workbench": "Pocket Crafter",
+  "item.callofthevoid.iron_plate": "Iron plate",
+  "item.callofthevoid.copper_plate": "Copper plate",
+  "item.callofthevoid.iron_wire": "Iron wire",
+  "item.callofthevoid.copper_wire": "Copper wire",
+  "item.callofthevoid.latex_ball": "Latex ball",
+  "item.callofthevoid.scheme": "Scheme",
+  "item.callofthevoid.microcircuit": "Microcircuit",
+  "item.callofthevoid.sawdust": "Sawdust",
+  "item.callofthevoid.bulb": "Bulb",
+  "item.callofthevoid.sensor": "Sensor",
+  "item.callofthevoid.wrench": "Wrench",
+  "item.callofthevoid.battery": "Battery",
+
   "block.callofthevoid.graphite_ore": "Graphite Ore",
 
   "block.callofthevoid.extractor": "Extractor",
@@ -9,13 +22,23 @@
   "block.callofthevoid.temperature_regulator": "Temperature regulator",
   "block.callofthevoid.body": "Body",
 
+  "block.callofthevoid.sawdust_block": "Sawdust Block",
+
   "block.callofthevoid.extractor.description": "This is a custom tooltip",
   "block.callofthevoid.accumulator.description": "This is a custom tooltip",
 
+  "block.callofthevoid.iron_plate.description": "This is a custom tooltip",
+  "block.callofthevoid.copper_plate.description": "This is a custom tooltip",
+  "block.callofthevoid.iron_wire.description": "This is a custom tooltip",
+  "block.callofthevoid.copper_wire.description": "This is a custom tooltip",
+  "block.callofthevoid.latex_ball.description": "This is a custom tooltip",
+  "block.callofthevoid.scheme.description": "This is a custom tooltip",
+  "block.callofthevoid.microcircuit.description": "This is a custom tooltip",
+  "block.callofthevoid.sensor.description": "This is a custom tooltip",
+  "block.callofthevoid.bulb.description": "This is a custom tooltip",
+
   "block.callofthevoid.graphite_oil": "Graphite Oil",
   "block.minecraft.empty": "Empty",
-
-  "itemGroup.callofthevoid.new_group": "Call of The void",
 
   "callofthevoid.tooltip.liquid.amount.with.capacity": "%s / %s mB",
   "callofthevoid.tooltip.liquid.amount": "%s mB"
