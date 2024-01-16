@@ -1,17 +1,17 @@
-package org.callofthevoid.screen.tabs;
+package org.callofthevoid.screen.elements;
 
 import net.minecraft.text.Text;
 
 import java.util.List;
 
-public class Tab {
+public class Button {
 
     private final List<Text> displayName;
     private final int iconOffset;
     private boolean hasClicked = false;
     private int index;
 
-    public Tab(List<Text> displayName, int iconOffset, int index) {
+    public Button(List<Text> displayName, int iconOffset, int index) {
         this.displayName = displayName;
         this.iconOffset = iconOffset;
         this.index = index;
@@ -34,10 +34,6 @@ public class Tab {
     }
 
     public void click() {
-        if (this.hasClicked) {
-            this.hasClicked = false;
-        } else {
-            this.hasClicked = true;
-        }
+        this.hasClicked = !this.hasClicked;
     }
 }

@@ -84,8 +84,8 @@ public class BaseScreenHandler extends ScreenHandler {
     }
 
     protected void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y,
-                                    FluidStack fluidStack, int offsetX, int offsetY, FluidStackRenderer renderer) {
-        if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
+                                    FluidStack fluidStack, FluidStackRenderer renderer) {
+        if(isMouseAboveArea(mouseX, mouseY, x, y, renderer.getOffsetX(), renderer.getOffsetY(), renderer)) {
             context.drawTooltip(MinecraftClient.getInstance().textRenderer, renderer.getTooltip(fluidStack, TooltipContext.Default.BASIC),
                     Optional.empty(), mouseX - x, mouseY - y);
         }
@@ -94,16 +94,15 @@ public class BaseScreenHandler extends ScreenHandler {
     protected void renderProgressArrowTooltip(DrawContext context, int pMouseX, int pMouseY, int x, int y,
                                               PropertyDelegate propertyDelegate, int offsetX, int offsetY,
                                               int width, int height) {
-        if(isMouseAboveArea(pMouseX, pMouseY, x, y, offsetX, offsetY, width, height)) { //87, 33, 22, 15
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, offsetX, offsetY, width, height)) {
             context.drawTooltip(MinecraftClient.getInstance().textRenderer, this.getPercent(propertyDelegate),
                     Optional.empty(), pMouseX - x, pMouseY - y);
         }
     }
 
     protected void renderEnergyAreaTooltip(DrawContext context, int pMouseX, int pMouseY, int x, int y,
-                                           EnergyInfoArea energyInfoArea, int offsetX, int offsetY,
-                                           int width, int height) {
-        if(isMouseAboveArea(pMouseX, pMouseY, x, y, offsetX, offsetY, width, height)) { //161 8 8 69
+                                           EnergyInfoArea energyInfoArea) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, energyInfoArea.getOffsetX(), energyInfoArea.getOffsetY(), energyInfoArea.getWidth(), energyInfoArea.getHeight())) {
             context.drawTooltip(MinecraftClient.getInstance().textRenderer, energyInfoArea.getTooltips(),
                     Optional.empty(), pMouseX - x, pMouseY - y);
         }

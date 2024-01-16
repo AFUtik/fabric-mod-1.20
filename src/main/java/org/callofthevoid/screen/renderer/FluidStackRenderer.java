@@ -29,6 +29,8 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     private final TooltipMode tooltipMode;
     private final int width;
     private final int height;
+    private final int offsetX;
+    private final int offsetY;
     private Formatting formatting;
 
     enum TooltipMode {
@@ -37,17 +39,17 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         ITEM_LIST
     }
 
-    public FluidStackRenderer(long capacityMb, boolean showCapacity, int width, int height, Formatting formatting) {
-        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, formatting);
+    public FluidStackRenderer(long capacityMb, boolean showCapacity, int width, int height, int offsetX, int offsetY, Formatting formatting) {
+        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, offsetX, offsetY, formatting);
     }
 
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    public FluidStackRenderer(int capacityMb, boolean showCapacity, int width, int height, Formatting formatting) {
-        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, formatting);
+    public FluidStackRenderer(int capacityMb, boolean showCapacity, int width, int height, int offsetX, int offsetY, Formatting formatting) {
+        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, offsetX, offsetY, formatting);
     }
 
-    private FluidStackRenderer(long capacityMb, TooltipMode tooltipMode, int width, int height, Formatting formatting) {
+    private FluidStackRenderer(long capacityMb, TooltipMode tooltipMode, int width, int height, int offsetX, int offsetY, Formatting formatting) {
         Preconditions.checkArgument(capacityMb > 0, "capacity must be > 0");
         Preconditions.checkArgument(width > 0, "width must be > 0");
         Preconditions.checkArgument(height > 0, "height must be > 0");
@@ -55,6 +57,8 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         this.tooltipMode = tooltipMode;
         this.width = width;
         this.height = height;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.formatting = formatting;
     }
 
@@ -75,7 +79,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         while (offsetHeight != 0) {
             final int curHeight = offsetHeight < this.height ? offsetHeight : this.height;
 
-            context.drawTexture(FLUID_TEX, x, y - offsetHeight, u, v, width, curHeight);
+            context.drawTexture(FLUID_TEX, x + offsetX, (y + offsetY) - offsetHeight, u, v, width, curHeight);
             offsetHeight -= curHeight;
             iteration++;
             if (iteration > 50) {
@@ -122,5 +126,15 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     @Override
     public int getHeight() {
         return height;
+    }
+
+
+    public int getOffsetX() {
+        return offsetX;
+    }
+
+
+    public int getOffsetY() {
+        return offsetY;
     }
 }

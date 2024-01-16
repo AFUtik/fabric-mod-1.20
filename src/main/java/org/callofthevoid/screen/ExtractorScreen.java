@@ -10,9 +10,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.callofthevoid.CallOfTheVoid;
+import org.callofthevoid.screen.renderer.ButtonRenderer;
 import org.callofthevoid.screen.renderer.EnergyInfoArea;
 import org.callofthevoid.screen.renderer.FluidStackRenderer;
-import org.callofthevoid.screen.renderer.TabRenderer;
 import org.callofthevoid.util.FluidStack;
 
 public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
@@ -20,7 +20,7 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
     EnergyInfoArea energyInfoArea;
     FluidStackRenderer fluidStackRenderer;
-    TabRenderer tabRenderer;
+    ButtonRenderer buttonRenderer;
 
     public ExtractorScreen(ExtractorScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -34,28 +34,29 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
 
         assignEnergyInfoArea();
         assignFluidStackRenderer();
-        assingTabManager();
+        assingButtonManager();
     }
 
     private void assignFluidStackRenderer() {
         fluidStackRenderer = new FluidStackRenderer(FluidStack.convertDropletsToMb(FluidConstants.BUCKET) * 5,
-                true, 12, 50, Formatting.GOLD);
+                true, 12, 50, 20, 15, Formatting.GOLD);
     }
 
     private void assignEnergyInfoArea() {
-        energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2) + 161,
-                ((height - backgroundHeight) / 2 ) + 8, handler.blockEntity.energyStorage, 8, 69);
+        energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2),
+                ((height - backgroundHeight) / 2 ),151, 17, handler.blockEntity.energyStorage, 11, 43);
     }
 
-    private void assingTabManager() {
-        this.tabRenderer = new TabRenderer((width - backgroundWidth) / 2, (height - backgroundHeight) / 2);
+    private void assingButtonManager() {
+        this.buttonRenderer = new ButtonRenderer((width - backgroundWidth) / 2, (height - backgroundHeight) / 2,
+                0, 2, 19, 24, 2);
 
-        this.tabRenderer.addDefaultTabs();
+        this.buttonRenderer.addDefaultButtons();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        tabRenderer.mouseClick(mouseX, mouseY);
+        buttonRenderer.mouseClick(mouseX, mouseY);
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -73,10 +74,11 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         handler.renderProgressArrow(TEXTURE, context, x, y, handler.propertyDelegate, 87, 33, 176, 0);
 
         energyInfoArea.draw(context);
-        fluidStackRenderer.drawFluid(context, handler.fluidStack,0, 0, x + 20, y + 17, fluidStackRenderer.capacityMb);
-        tabRenderer.draw(context);
+        fluidStackRenderer.drawFluid(context, handler.fluidStack,0, 0, x, y, fluidStackRenderer.capacityMb);
 
-        context.drawTexture(TEXTURE, x + 20, y + 17, 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
+        context.drawTexture(TEXTURE, x + fluidStackRenderer.getOffsetX(), y + fluidStackRenderer.getOffsetY(), 180, 17, fluidStackRenderer.getWidth(), fluidStackRenderer.getHeight());
+
+        buttonRenderer.draw(context);
     }
 
     @Override
@@ -84,11 +86,11 @@ public class ExtractorScreen extends HandledScreen<ExtractorScreenHandler> {
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
-        handler.renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, 20, 17, fluidStackRenderer);
-        handler.renderEnergyAreaTooltip(context, mouseX, mouseY, x, y, this.energyInfoArea, 161, 8, 8, 69);
+        handler.renderFluidTooltip(context, mouseX, mouseY, x, y, handler.fluidStack, fluidStackRenderer);
+        handler.renderEnergyAreaTooltip(context, mouseX, mouseY, x, y, this.energyInfoArea);
         handler.renderProgressArrowTooltip(context, mouseX, mouseY, x, y, handler.propertyDelegate, 87, 33, 22, 15);
 
-        tabRenderer.renderTooltip(context, client.textRenderer, mouseX, mouseY);
+        buttonRenderer.renderTooltip(context, client.textRenderer, mouseX, mouseY);
     }
 
     @Override
